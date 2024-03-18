@@ -1,13 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import HomeUnFaveButton from '../Assets/IMG_SubButton.png'
 import HomeFaveButton from '../Assets/IMG_AddButton.png'
 import HomeLoadPhoto from '../Assets/ANIM_Loading.gif'
-import { getLocalStorage, getPokeData, getPokeEncounterData, getPokeEvolveData, removeFromLocalStorage, saveLocalFavoriteData, saveToLocalStorage } from '../DataServices/DataService'
+import PokemonIcon from '../Assets/IMG_PokemonIcon.png'
 
-import { IPokemon, ILocation, IEvolution } from '../Interfaces/Interface'
+import { getLocalStorage, getPokeData, getPokeEncounterData, getPokeEvolveData, removeFromLocalStorage, saveLocalFavoriteData, getPokeEvolveChain, getPokeEvolveImage, getPokeEvolveId } from '../DataServices/DataService'
+
+import { IPokemon, ILocation, IEvolution, IRegEvolution } from '../Interfaces/Interface'
 
 import { capitalSplitCase, padNumbers } from '../DataServices/Utilities'
+
+import { Sidebar } from 'flowbite-react';
+import { HiArrowSmRight, HiChartPie, HiInbox, HiShoppingBag, HiTable, HiUser, HiViewBoards } from 'react-icons/hi';
 
 const PokePageComponent = () => {
     const [userInput, setUserInput] = useState<string>('bulbasaur');
@@ -21,6 +26,12 @@ const PokePageComponent = () => {
     const [homeFavButton, setHomeFavButton] = useState<string>();
 
     const [shiny, setShiny] = useState<boolean>(true);
+
+    const [pokemonEvolution, setPokemonEvolution] = useState<IRegEvolution | null>(null);
+    const [pokemonEvoData, setPokeEvoData] = useState<string[]>([]);
+    const [evolutionDatas, setEvolutionData] = useState<{ evolutionImage: string, evolutionId: string }[]>([])
+
+    const [evolveData, setEvolveData] = useState<IRegEvolution>();
 
     useEffect(() => {
         setPokeImage(HomeLoadPhoto);
@@ -43,6 +54,10 @@ const PokePageComponent = () => {
 
             const evolutionData = await getPokeEvolveData(userInput);
             const evoData: IEvolution = evolutionData;
+            console.log(evoData.evolution_chain.url);
+            const evoTypeData = await getPokeEvolveChain(evoData.evolution_chain.url);
+            const evoType: { evolution_chain: { chain: { species: { name: string }; evolves_to: { species: { name: string }[] }[] } } } | any | IRegEvolution = evoTypeData;
+            console.log(evoType);
 
             setPokemon(data);
             setPokeName(capitalSplitCase(data.name) + " - #" + padNumbers(data.id, 3));
@@ -50,6 +65,7 @@ const PokePageComponent = () => {
             setPokeAbility(abilityData);
             setPokeMoves(movesData);
             setPokeImage(data?.sprites.other?.['official-artwork'].front_default);
+            setEvolveData(evoType);
 
             const favorites: (IPokemon | string)[] = getLocalStorage();
             const isFavorite = favorites.some((favPokemon: IPokemon | string) => {
@@ -82,21 +98,52 @@ const PokePageComponent = () => {
 
             GetFlavorText();
 
+            const pokemonEvolutionChain: string[] = [];
+
+            if (evoType && evoType.chain) {
+                pokemonEvolutionChain.push(evoType.chain.species.name);
+                evoType.chain.evolves_to.forEach((e: { species: { name: string; }; evolves_to: string[]; }) => {
+                    e.species && pokemonEvolutionChain.push(e.species.name);
+                    e.evolves_to.forEach((e: any) => {
+                        e.species && pokemonEvolutionChain.push(e.species.name);
+                    });
+                });
+            }
+            setPokeEvoData(pokemonEvolutionChain);
+            console.log(pokemonEvolutionChain);
         }
 
         getMainData();
     }, [userInput]);
 
+    const fetchEvolutionData = useCallback(async () => {
+        const promise = pokemonEvoData.map(async (evolutionName: string) => {
+            const evolutionImage = await getPokeEvolveImage(evolutionName);
+            const evolutionId = await getPokeEvolveId(evolutionName);
+
+            console.log(evolutionImage);
+
+            return { evolutionImage, evolutionId: String(evolutionId) };
+        });
+
+        const dataEvo = await Promise.all(promise);
+        setEvolutionData(dataEvo);
+    }, [pokemonEvoData]);
+
+    useEffect(() => {
+        fetchEvolutionData();
+    }, [fetchEvolutionData]);
+
     const handleShinyPokemon = () => {
-        setShiny(!shiny);
+        const shinyPic = pokemon?.sprites.other?.['official-artwork'].front_shiny;
+        const defaultPic = pokemon?.sprites.other?.['official-artwork'].front_default;
 
-        if (shiny === true) {
-            setPokeImage(`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${pokemon?.id}.png`);
-
-        } else {
-            setPokeImage(`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon?.id}.png`);
+        if (shinyPic && pokeImage !== shinyPic) {
+            setPokeImage(shinyPic);
+        } else if (defaultPic && pokeImage !== defaultPic) {
+            setPokeImage(defaultPic);
         }
-    }
+    };
 
     const doSomething = (event: React.FormEvent) => {
         event.preventDefault();
@@ -184,6 +231,13 @@ const PokePageComponent = () => {
                 <h1 className="text-center text-5xl font-extrabold text-black pt-5 font-custom">Type:</h1>
 
                 <div id="typeContainer" className="flex justify-center pt-10 pb-5 flex-row space-x-4 font-custom">
+                {pokemon ? pokemon.types.map((type: { type: { name: string } }, index: number) => (
+                            <div className='typeIconContainer flex items-center' key={index} style={{backgroundColor: 'gray'}}>
+                                <img src={`../assets/IMG_${capitalSplitCase(`${type.type.name}`)}.png`} className='typeImg' alt='typeIcon'/>
+                                <p className='text-white mx-auto text-2xl pr-4'>{capitalSplitCase(`${type.type.name}`)}</p>
+                            </div>
+                        ))
+                            : "N/A"}
                 </div>
 
                 <hr style={{ border: "3px solid black" }} className="mt-5" />
@@ -206,8 +260,59 @@ const PokePageComponent = () => {
                 <h1 id="pokemonMoves" className="text-center text-5xl font-extrabold text-white pt-5 font-custom" style={{ textShadow: "4px 4px 6px black" }}>Evolutions:</h1>
 
                 <div id="evolveContainer" className="pt-5 pb-5 font-custom">
+                <div className='flex items-center justify-center evolveBranch' style={{ outline: '2px solid black', backgroundColor: 'white', borderRadius: '5px' }}>
+                        {evolutionDatas.map(({ evolutionImage, evolutionId }, index) => (
+                            <>
+                                {index > 0 && <i className='ph-arrow-right-bold' />}
+                                <div className="evolveCol">
+                                <img src={`${evolutionImage}`} className="evolveImg mx-auto"
+                                    onClick={() => {
+                                        setUserInput(pokemonEvoData[index]);
+                                        window.scroll({
+                                            top: 0,
+                                            left: 0,
+                                            behavior: "smooth",
+                                        });
+                                    }} alt={pokemonEvoData[index]}
+                                />
+                                <p className="text-center">{capitalSplitCase(pokemonEvoData[index])}</p>
+                            </div>
+                            </>
+                        ))}
+                    </div>
                 </div>
             </div>
+
+            <Sidebar aria-label="Sidebar with logo branding example">
+                <Sidebar.Logo href="#" img={PokemonIcon} imgAlt="Flowbite logo">
+                    My Favorite Pokémon
+                </Sidebar.Logo>
+                <Sidebar.Items>
+                    <Sidebar.ItemGroup>
+                        <Sidebar.Item href="#" icon={HiChartPie}>
+                            Dashboard
+                        </Sidebar.Item>
+                        <Sidebar.Item href="#" icon={HiViewBoards}>
+                            Kanban
+                        </Sidebar.Item>
+                        <Sidebar.Item href="#" icon={HiInbox}>
+                            Inbox
+                        </Sidebar.Item>
+                        <Sidebar.Item href="#" icon={HiUser}>
+                            Users
+                        </Sidebar.Item>
+                        <Sidebar.Item href="#" icon={HiShoppingBag}>
+                            Products
+                        </Sidebar.Item>
+                        <Sidebar.Item href="#" icon={HiArrowSmRight}>
+                            Sign In
+                        </Sidebar.Item>
+                        <Sidebar.Item href="#" icon={HiTable}>
+                            Sign Up
+                        </Sidebar.Item>
+                    </Sidebar.ItemGroup>
+                </Sidebar.Items>
+            </Sidebar>
         </>
     )
 }

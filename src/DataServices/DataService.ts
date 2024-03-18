@@ -1,4 +1,4 @@
-import { IEvolution, IPokemon } from "../Interfaces/Interface";
+import { IEvolution, ILocation, IPokemon } from "../Interfaces/Interface";
 
 export const saveToLocalStorage = (pokename: string) => {
     let favorites = getLocalStorage();
@@ -73,7 +73,7 @@ export const getPokeEncounterData = async (id: string) => {
     return data;
 }
 
-export const getPokeEvolveData = async (value: string) =>{
+export const getPokeEvolveData = async (value: string) => {
     const promise = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${value.toLowerCase()}`);
     const data : IEvolution = await promise.json();
     
@@ -81,3 +81,24 @@ export const getPokeEvolveData = async (value: string) =>{
     
     return data;
 }
+
+export const getPokeEvolveChain = async (value: string) => {
+    const promise = await fetch(`${value}`);
+    const data: ILocation = await promise.json();
+
+    return data;
+}
+
+export const getPokeEvolveImage = async (value: string) => {
+    const promise = await fetch(`https://pokeapi.co/api/v2/pokemon/${value}`);
+    const data: any = await promise.json();
+
+    return data.sprites.other?.showdown.front_default;
+}
+
+export const getPokeEvolveId = async (value: string) => {
+    const promise = await fetch(`https://pokeapi.co/api/v2/pokemon/${value}`);
+    const data: IPokemon = await promise.json();
+
+    return data.id;
+};
