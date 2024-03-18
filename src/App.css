@@ -1,38 +1,186 @@
-.App {
-  text-align: center;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+.font-custom {
+    font-family: 'Kanit', sans-serif;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+html {
+    height: 100%;
+    margin: 0;
+    overflow-x: hidden;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+body {
+    height: 100%;
+    padding: 0;
+    color: #000000;
+    background-image: url('./Assets/BKGD_Green.png');
+    background-color: rgb(209, 229, 217);
+    background-repeat: no-repeat;
+    background-size: cover; 
+    background-attachment: fixed;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.sidebar-width {
+    width: 480px;
 }
 
-.App-link {
-  color: #61dafb;
+.search-bar-width {
+    width: 1280px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.bg-grey-half {
+    background-color: rgb(48, 48, 48);
+}
+
+#pokemonImg {
+    cursor: pointer;
+    transition: 0.25s width;
+}
+
+.pokeImgSize {
+    width: 24rem;
+}
+.pokeImgSize:hover {
+    width: 26rem;
+}
+
+#favoritePokeButton:hover {
+    opacity: 50%;
+}
+
+.favePokeBox:hover, .evolveImg:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.favePokeBox, .evolveImg {
+    transform: scale(1.00);
+    cursor: none;
+    transition: 0.25s;
+}
+
+.favePokeBox {
+    width: 90%;
+    height: 128px;
+    border-radius: 10px;
+    background-color: rgb(255, 255, 255);
+    margin-top: 25px;
+}
+  
+.favePokeImg {
+  height: 90%;
+  margin-left: 15px;
+}
+
+.favePokeText {
+    justify-content: right;
+    text-align: right;
+    font-size: 28px;
+    margin-left: 40px;
+}
+
+.favoriteButtonSubRemove {
+    margin-top: 0px;
+    margin-left: 0px;
+}
+
+.evolveCol {
+    width: 15%;
+}
+
+.evolveImg {
+  height: 70px;
+}
+
+.evolveBranch {
+  margin: 20px;
+}
+
+.ph-arrow-right-bold::before {
+    content: "\2192";
+    
+}
+.ph-arrow-right-bold {
+  color: black;
+  font-size: 48px;
+  text-shadow: 0 0 12px rgba(0, 0, 0, .25);
+}
+
+.typeIconContainer {
+    width: 200px;
+    height: 45px;
+    background-color: #63bd5b;
+    border-radius: 25px;
+    margin-right: 10px;
+}
+.typeImg {
+    padding-left: 15px;
+    height: 30px;
+    width: auto;
+    text-shadow: 0 0 12px rgba(0,0,0,.25);
+}
+
+.move-text {
+    font-size: 36px;
+    line-height: 40px;
+}
+
+.abilities-text {
+    font-size: 36px;
+    line-height: 40px;
+}
+
+.flavor-text {
+    font-size: 36px;
+    line-height: 40px;  
+}
+
+@media only screen and (max-width: 768px) {
+    .search-bar-width {
+        width: 540px;
+    }
+    .typeIconCont {
+        margin-top: 2px;
+        width: 83px;
+        height: 25px;
+    }
+    .move-text {
+        font-size: 24px;
+        line-height: 30px;
+    }
+}
+@media only screen and (max-width: 480px) {
+    .search-bar-width {
+        width: 100%;
+    }
+    .sidebar-width {
+        width: 100%;
+    }
+    .favoriteButtonSubRemove {
+        margin-left: 30px;
+    }
+    .evolveCol {
+        width: 20%;
+    }
+    .evolveImg {
+        height: 42px;
+    }
+    .move-text {
+        font-size: 16px;
+        line-height: 18px;
+    }
+    .abilities-text {
+        font-size: 28px;
+        line-height: 40px;
+    }
+    .flavor-text {
+        font-size: 24px;
+        line-height: 30px;  
+    }
 }
