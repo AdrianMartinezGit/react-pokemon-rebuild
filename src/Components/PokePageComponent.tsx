@@ -475,13 +475,13 @@ const PokePageComponent = () => {
 
                 <div id="evolveContainer" className="pt-5 pb-5 font-custom">
                     <div className='flex items-center justify-center evolveBranch' style={{ outline: '2px solid black', backgroundColor: 'white', borderRadius: '5px' }}>
-                        {evolutionDatas.map(({ evolutionImage, evolutionId }, index) => (
+                        {evolutionDatas.map(({ evolutionImage }, index) => (
                             <>
                                 {index > 0 && <i className='ph-arrow-right-bold' />}
                                 <div className="evolveCol">
                                     <img src={`${evolutionImage}`} className="evolveImg mx-auto"
                                         onClick={() => {
-                                            setUserInput(pokemonEvoData[index]);
+                                            setUserInput(String(pokemonEvoData[index]));
                                             window.scroll({
                                                 top: 0,
                                                 left: 0,
@@ -489,7 +489,7 @@ const PokePageComponent = () => {
                                             });
                                         }} alt={pokemonEvoData[index]}
                                     />
-                                    <p className="text-center">{capitalSplitCase(pokemonEvoData[index])}</p>
+                                    <p className="text-center">{capitalSplitCase(String(pokemonEvoData[index]))}</p>
                                 </div>
                             </>
                         ))}
