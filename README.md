@@ -24,5 +24,4 @@ Peer Reviewed by ({Name Here}):<br>
 <br><br>
 <b>Figma Link:</b> https://www.figma.com/file/WV74uhcLUkndP4QDhvLvls/Pokemon-API-Challenge?type=design&node-id=0%3A1&mode=design&t=VMZhmwrsfZ1Vij1H-1
 <br>
-<b>Azure Link:</b> https://reactpokemonapichallenge.azurewebsites.net/
                    
