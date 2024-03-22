@@ -18,8 +18,8 @@ I used my knowledge of HTML, CSS, and ReactJS to create my own functioning and r
     <li>Rebuilt with React Typescript</li>
 </ul>
 <br>
-Peer Reviewed by ({Name Here}):<br>
-({Comments here})
+Peer Reviewed by ({Mark Ortega}):<br>
+({Really well made, I couldn't find a way to break it either. My only complaint is the favorites button. I do wish the "Plus symbol" was a Start instead because it sorta was confusing. Other than that it was a pretty well made site. Well done!(also id recommend not making all the text bold)})
 
 <br><br>
 <b>Figma Link:</b> https://www.figma.com/file/WV74uhcLUkndP4QDhvLvls/Pokemon-API-Challenge?type=design&node-id=0%3A1&mode=design&t=VMZhmwrsfZ1Vij1H-1
